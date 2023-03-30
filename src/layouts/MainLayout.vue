@@ -25,14 +25,6 @@
       bordered
     >
       <q-list>
-        <q-item clickable to="/dashboard">
-          <q-item-section avatar>
-            <q-icon name="home_work" />
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>Principal</q-item-label>
-          </q-item-section>
-        </q-item>
         <q-item clickable to="/usuari/list" v-if="rolsUser.find(rol=>rol===rols.ADMINISTRADOR || rol===rols.DIRECTOR || rol===rols.CAP_ESTUDIS)">
           <q-item-section avatar>
             <q-icon name="groups" />
