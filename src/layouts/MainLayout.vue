@@ -15,7 +15,7 @@
           GestSuite - Gestió d'usuaris Gestib i GSuite
         </q-toolbar-title>
 
-        <Menu v-if="enableApps && (rolsUser.find(rol=>rol===rols.ADMINISTRADOR || rol===rols.DIRECTOR || rol===rols.CAP_ESTUDIS || rol===rols.ADMINISTRATIU || rol===rols.WEB))"></Menu>
+        <Menuapp v-if="enableApps && (rolsUser.find(rol=>rol===rols.ADMINISTRADOR || rol===rols.DIRECTOR || rol===rols.CAP_ESTUDIS || rol===rols.ADMINISTRATIU || rol===rols.WEB))"></Menuapp>
       </q-toolbar>
     </q-header>
 
@@ -109,7 +109,7 @@ import {Rol} from '../model/Rol.ts'
 export default defineComponent({
   name: 'MainLayout',
   components:{
-    Menu: defineAsyncComponent(()=> import('app_common/Menu.vue'))
+    Menuapp
   },
   setup () {
     const leftDrawerOpen = ref(false)
