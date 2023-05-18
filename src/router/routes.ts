@@ -5,7 +5,7 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') },
+      { path: '', component: () => import('pages/UsuariList.vue') },
       { path: 'upload', component: () => import('pages/UploadFile.vue') },
       { path: 'grupcorreu/list', component: () => import('pages/GrupCorreuList.vue') },
       { path: 'grupcorreu', component: () => import('pages/GrupCorreuForm.vue') },
@@ -27,8 +27,8 @@ const routes: RouteRecordRaw[] = [
       { path: 'llistats/usuariscustom', component: () => import('pages/llistats/UsuarisCustom.vue') },
       { path: 'administrador', component: () => import('pages/Administrador.vue') },
       { path: 'profile/:id', component: () => import('pages/Profile.vue') },
-      { path: 'login', component: () => import('app_common/Login.vue'), props: { urlRedirect: "/usuari/list" } },
-      { path: 'logout', component: () => import('app_common/Logout.vue') },
+      { path: 'login', component: () => import('components/common/Login.vue'), props: { urlRedirect: "/usuari/list" } },
+      { path: 'logout', component: () => import('components/common/Logout.vue') },
     ],
   },
 
