@@ -104,7 +104,7 @@
 import { defineComponent,defineAsyncComponent,ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {Rol} from '../model/Rol.ts'
-
+import Menuapp from '../components/common/AppsMenu.vue'
 
 export default defineComponent({
   name: 'MainLayout',
