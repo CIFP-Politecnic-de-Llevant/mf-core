@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "GestSuite - Gestió d'usuaris Gestib i GSuite",
   "productName": "GestSuite - Gestió d'usuaris Gestib i GSuite",
-  "author": "jgalmes1@iesmanacor.cat",
+  "author": "jgalmes@politecnicllevant.cat",
   "private": true,
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
