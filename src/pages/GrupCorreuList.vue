@@ -96,7 +96,9 @@ export default defineComponent({
           let nom = "";
           if(grup.gestibCurs) {
             let dataCurs = cursos.find(c=>c.gestibIdentificador===grup.gestibCurs)
-            nom = dataCurs.gestibNom;
+            if(dataCurs) {
+              nom += dataCurs.gestibNom;
+            }
           }
           nom += grup.gestibNom;
           nomGrups.push(nom);
