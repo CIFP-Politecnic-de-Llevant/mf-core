@@ -67,14 +67,6 @@ export default defineComponent({
           sortable: true
         },
         {
-          name: 'unitatorganitzativa',
-          required: true,
-          label: 'Unitat Organitzativa',
-          align: 'left',
-          field: row => row.unitatOrganitzativa,
-          sortable: true
-        },
-        {
           name: 'grups',
           required: true,
           label: 'Grups',
@@ -82,7 +74,7 @@ export default defineComponent({
           field: row => {
             console.log(row);
             if(row.grups){
-              return row.grups.map((g:Grup)=>g.nom).join(", ")
+              return row.grups.map((g:Grup)=>g.nom + (g.unitatOrganitzativa)?` (${g.unitatOrganitzativa})`:'').join(", ")
             }
             return "";
           },

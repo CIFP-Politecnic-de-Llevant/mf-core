@@ -6,4 +6,5 @@ export interface Grup {
   tutor1?: Usuari;
   tutor2?: Usuari;
   tutor3?: Usuari;
+  unitatOrganitzativa?: string;
 }

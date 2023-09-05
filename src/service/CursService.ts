@@ -26,8 +26,7 @@ export class CursService {
   static fromJSON(json:any):Curs{
     return {
       id: json.idcurs,
-      nom: json.gestibNom,
-      unitatOrganitzativa: json.gsuiteUnitatOrganitzativa
+      nom: json.gestibNom
     }
   }
 }

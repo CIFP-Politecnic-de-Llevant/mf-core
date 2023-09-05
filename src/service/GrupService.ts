@@ -33,12 +33,17 @@ export class GrupService {
     if(json.gestibTutor3 && includeTutorsGrup){
       tutor3 = await UsuariService.getByGestibId(json.gestibTutor3);
     }
+    let unitatOrganitzativa = undefined;
+    if(json.gsuiteUnitatOrganitzativa){
+      unitatOrganitzativa = json.gsuiteUnitatOrganitzativa;
+    }
     return {
       id: json.idgrup,
       nom: json.gestibNom,
       tutor1: tutor1,
       tutor2: tutor2,
-      tutor3: tutor3
+      tutor3: tutor3,
+      unitatOrganitzativa: unitatOrganitzativa
     }
   }
 }

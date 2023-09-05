@@ -2,14 +2,20 @@
   <q-page class="flex column q-gutter-lg" padding>
     <p class="text-h3">Curs: {{curs.nom}}</p>
 
-    <q-input v-model="curs.unitatOrganitzativa" label="Unitat Organitzativa" />
-
     <q-table
       title="Grups"
       :rows="grups"
       :columns="columnesGrup"
       row-key="id"
     >
+      <template v-slot:body-cell-unitatorganitzativa="props">
+        <q-td key="name" :props="props" title="Click per editar" style="cursor:pointer;">
+          <div class="row no-wrap">
+              <q-input class="col-9" v-model="props.row.unitatOrganitzativa" dense autofocus counter/>
+              <q-btn class="col-3" flat icon="save" @click="saveGrup(props.row.unitatOrganitzativa,props.row.id)" />
+          </div>
+        </q-td>
+      </template>
     </q-table>
 
     <q-btn color="primary" icon="save" label="Desar" @click="save" />
@@ -84,6 +90,18 @@ export default defineComponent({
             }
           },
           sortable: true
+        },
+        {
+          name: 'unitatorganitzativa',
+          required: true,
+          label: 'Unitat Organitzativa',
+          align: 'left',
+          field: row => {
+            if(row.gsuiteUnitatOrganitzativa){
+              return row.gsuiteUnitatOrganitzativa
+            }
+          },
+          sortable: true
         }
       ]
 
@@ -98,7 +116,7 @@ export default defineComponent({
       }
 
     },
-    save: async function(){
+    saveGrup: async function(uo:string,idgrup:string){
       const dialog = this.$q.dialog({
         message: 'Carregant...',
         progress: true, // we enable default settings
@@ -106,6 +124,16 @@ export default defineComponent({
         ok: false // we want the user to not be able to close it
       })
 
+      await this.$axios.post(process.env.API + '/api/core/grup/desaUO',{uo:uo,idgrup:idgrup});
+      dialog.hide();
+    },
+    save: async function(){
+      const dialog = this.$q.dialog({
+        message: 'Carregant...',
+        progress: true, // we enable default settings
+        persistent: true, // we want the user to not be able to close it
+        ok: false // we want the user to not be able to close it
+      })
 
       await this.$axios.post(process.env.API + '/api/core/curs/desa',this.curs);
       dialog.hide();
