@@ -40,6 +40,7 @@
 
 <script>
 import { defineComponent } from 'vue';
+import {CentreService} from "src/service/CentreService";
 
 export default defineComponent({
   name: 'PageIndex',

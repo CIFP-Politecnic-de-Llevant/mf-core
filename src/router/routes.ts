@@ -29,6 +29,7 @@ const routes: RouteRecordRaw[] = [
       { path: 'profile/:id', component: () => import('pages/Profile.vue') },
       { path: 'login', component: () => import('components/common/Login.vue'), props: { urlRedirect: "/usuari/list" } },
       { path: 'logout', component: () => import('components/common/Logout.vue') },
+      { path: 'manteniment', component: () => import('components/common/Manteniment.vue') },
     ],
   },
 

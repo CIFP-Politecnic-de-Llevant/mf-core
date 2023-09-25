@@ -7,6 +7,7 @@ import {
 } from 'vue-router';
 import routes from './routes';
 import axios from "axios";
+import {CentreService} from "src/service/CentreService";
 
 /*
  * If not building with SSR mode, you can
@@ -34,10 +35,17 @@ export default route(function (/* { store, ssrContext } */) {
     ),
   });
 
-  Router.beforeEach((to, from, next) => {
+  Router.beforeEach(async (to, from, next) => {
     axios.defaults.withCredentials = true;
     axios.defaults.headers.common['Authorization'] = 'Bearer '+localStorage.getItem('token');
-    next();
+
+    const isSincronitzant = await CentreService.isSincronitzant();
+    console.log(isSincronitzant,to)
+    if(!to.path.includes("manteniment") && isSincronitzant) {
+      next("manteniment");
+    } else {
+      next();
+    }
   })
 
   return Router;

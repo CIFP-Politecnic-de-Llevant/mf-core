@@ -1,6 +1,7 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance } from 'axios';
 import {Notify} from 'quasar'
+import {CentreService} from "src/service/CentreService";
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -24,6 +25,15 @@ export default boot(({ app,router }) => {
     }
     axios.defaults.withCredentials = true;
     axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
+
+    //Només entrem al condicional si no es fa ja una cridada a sincronitzant perquè sinó seria un bucle infinit.
+    /*if(!config.url?.includes("/api/core/centre/sincronitzant")){
+      const isSincronitzant = await CentreService.isSincronitzant();
+      console.log(isSincronitzant)
+      if(isSincronitzant) {
+        router.push('/manteniment');
+      }
+    }*/
 
     return config;
   }, function (error) {
