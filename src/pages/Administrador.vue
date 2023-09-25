@@ -64,9 +64,11 @@ export default defineComponent({
     simula: async function(){
       const resultat = await this.$axios.post(process.env.API + "/api/core/sync/simular");
       this.result = resultat.data;
+      window.location.reload();
     },
     sync: async function(){
       await this.$axios.post(process.env.API + "/api/core/sync/sincronitza");
+      window.location.reload();
     },
     syncAlumnes: async function(){
       await this.$axios.post(process.env.API + "/api/core/sync/reassignarGrupsAlumnes");
