@@ -5,6 +5,9 @@
     <q-btn :disable="!botoActiu" @click="backupDatabase" color="primary" class="q-ma-md">Backup Database</q-btn>
     <small class="text-center">Còpia de seguretat de la base de dades. Upload al bucket de Google.</small>
 
+    <q-btn :disable="!botoActiu" @click="syncCalendaris" color="primary" class="q-ma-md">Sincronitza Calendaris</q-btn>
+    <small class="text-center">Sincronitza calendaris</small>
+
     <q-btn :disable="!botoActiu" @click="importGSuiteUsers" color="primary" class="q-ma-md">Importar usuaris GSuite</q-btn>
     <small class="text-center">Importar còpia de GSuite a la BBDD</small>
 
@@ -105,6 +108,11 @@ export default defineComponent({
     cancelUpload: async function(){
       this.botoActiu = false;
       await this.$axios.post(process.env.API + "/api/core/sync/cancelupload");
+      this.botoActiu = true;
+    },
+    syncCalendaris: async function(){
+      this.botoActiu = false;
+      await this.$axios.post(process.env.API + "/api/core/calendari/sync");
       this.botoActiu = true;
     }
 
