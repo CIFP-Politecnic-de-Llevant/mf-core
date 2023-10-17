@@ -1,6 +1,7 @@
 import {axios}  from 'boot/axios'
 import {UsuariService} from "src/service/UsuariService";
 import {Calendari} from "src/model/google/Calendari";
+import {GrupCorreuService} from "src/service/GrupCorreuService";
 
 export class CalendariService {
   static async getCalendariByEmail(email:string): Promise<Calendari> {
@@ -26,8 +27,8 @@ export class CalendariService {
       tipus: json.calendariTipus,
       usuarisLectura: (json.usuarisLectura)?json.usuarisLectura.map((u:any)=>UsuariService.fromJSON(u)):undefined,
       usuarisEdicio: (json.usuarisEdicio)?json.usuarisEdicio.map((u:any)=>UsuariService.fromJSON(u)):undefined,
-      grupCorreuLectura: (json.grupCorreuLectura)?json.grupCorreuLectura.map((u:any)=>UsuariService.fromJSON(u)):undefined,
-      grupCorreuEdicio: (json.grupCorreuEdicio)?json.grupCorreuEdicio.map((u:any)=>UsuariService.fromJSON(u)):undefined,
+      grupCorreuLectura: (json.grupCorreuLectura)?json.grupCorreuLectura.map((u:any)=>GrupCorreuService.fromJSON(u)):undefined,
+      grupCorreuEdicio: (json.grupCorreuEdicio)?json.grupCorreuEdicio.map((u:any)=>GrupCorreuService.fromJSON(u)):undefined,
       label: json.gsuiteNom,
       value: json.idcalendari
     }

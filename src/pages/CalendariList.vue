@@ -69,21 +69,53 @@ export default defineComponent({
           sortable: true
         },
         {
-          name: 'tipus',
+          name: 'nom',
           required: true,
-          label: 'Tipus',
+          label: 'Correu electrònic',
           align: 'left',
-          field: row => row.tipus,
+          field: row => row.email,
           sortable: true
         },
         {
+          name: 'usuarisLectura',
+          required: true,
+          label: 'Usuaris Lectura',
+          align: 'left',
+          field: row => (row.usuarisLectura)?.map((u:any)=>`${u.nomComplet} <${u.email}>`),
+          sortable: true
+        },
+        {
+          name: 'usuarisEscriptura',
+          required: true,
+          label: 'Usuaris Escriptura',
+          align: 'left',
+          field: row => (row.usuarisEdicio)?.map((u:any)=>`${u.nomComplet} <${u.email}>`),
+          sortable: true
+        },
+        {
+          name: 'grupsLectura',
+          required: true,
+          label: 'Grups Lectura',
+          align: 'left',
+          field: row => (row.grupCorreuLectura)?.map((gc:any)=>`${gc.nom} <${gc.email}>`),
+          sortable: true
+        },
+        {
+          name: 'grupsEscriptura',
+          required: true,
+          label: 'Grups Escriptura',
+          align: 'left',
+          field: row => (row.grupCorreuEdicio)?.map((gc:any)=>`${gc.nom} <${gc.email}>`),
+          sortable: true
+        },
+        /*{
           name: 'accions',
           required: true,
           label: 'Accions',
           align: 'center',
           field: row => row.email,
           sortable: true
-        }
+        }*/
       ]
 
       const calendaris:Array<Calendari>= await CalendariService.getCalendaris();
