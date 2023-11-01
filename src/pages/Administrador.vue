@@ -35,8 +35,8 @@
     <q-btn :disable="!botoActiu" @click="provaGmail" color="primary" class="q-ma-md">Prova Gmail</q-btn>
     <small class="text-center">Missatge de prova de Gmail</small>
 
-    <div v-if="result">
-      <p v-for="r in result">{{r}}</p>
+    <div id="result" v-if="result">
+      <div v-for="r in result" v-html="r"></div>
     </div>
   </q-page>
 </template>
@@ -70,10 +70,17 @@ export default defineComponent({
       this.botoActiu = true;
     },
     simula: async function(){
+      const dialog = this.$q.dialog({
+        message: 'Iniciant la simulació... (Resultat al final de la pàgina)',
+        progress: true, // we enable default settings
+        persistent: true, // we want the user to not be able to close it
+        ok: false // we want the user to not be able to close it
+      })
       this.botoActiu = false;
       const resultat = await this.$axios.post(process.env.API + "/api/core/sync/simular");
       this.result = resultat.data;
-      window.location.reload();
+      this.botoActiu = true;
+      dialog.hide();
     },
     sync: async function(){
       this.botoActiu = false;
@@ -119,3 +126,9 @@ export default defineComponent({
   }
 })
 </script>
+
+<style lang="scss">
+#result h3{
+  font-size: 24px;
+}
+</style>
