@@ -4,7 +4,7 @@
     <p class="text-h6">{{grup.gsuiteEmail}}</p>
 
     <q-input v-model="grup.gsuiteNom" label="Nom" />
-    <q-input v-model="grup.gsuiteEmail" label="Email" />
+    <q-input v-model="grup.gsuiteEmail" label="Email" type="email" hint="Correu electrònic complet" />
 
     <q-select
       filled
