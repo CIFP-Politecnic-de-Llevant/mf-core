@@ -26,8 +26,14 @@
     <q-btn :disable="!botoActiu" @click="syncAlumnes" color="primary" class="q-ma-md">Reassigna grups alumnes</q-btn>
     <small class="text-center">Resincronitza els grups de TOTS els alumnes (Gestib i GSuite)</small>
 
+    <q-btn :disable="!botoActiu" @click="syncAlumnesForce" color="primary" class="q-ma-md">Forçar reassignació grups alumnes</q-btn>
+    <small class="text-center">Esborra i torna a crear els grups de TOTS els alumnes (Gestib i GSuite)</small>
+
     <q-btn :disable="!botoActiu" @click="syncProfessors" color="primary" class="q-ma-md">Reassigna grups professors</q-btn>
     <small class="text-center">Resincronitza els grups de TOTS els professors (Gestib i GSuite)</small>
+
+    <q-btn :disable="!botoActiu" @click="syncProfessorsForce" color="primary" class="q-ma-md">Forçar reassignació grups professors</q-btn>
+    <small class="text-center">Esborra i torna a crear els grups de TOTS els professors (Gestib i GSuite)</small>
 
     <q-btn :disable="!botoActiu" @click="normalitzarNoms" color="primary" class="q-ma-md">Normalitzar noms</q-btn>
     <small class="text-center">Normalitza els noms amb el format "Nom Cognom1 Cognom2"</small>
@@ -92,9 +98,19 @@ export default defineComponent({
       await this.$axios.post(process.env.API + "/api/core/sync/reassignarGrupsAlumnes");
       this.botoActiu = true;
     },
+    syncAlumnesForce: async function(){
+      this.botoActiu = false;
+      await this.$axios.post(process.env.API + "/api/core/sync/reassignarGrupsAlumnesForce");
+      this.botoActiu = true;
+    },
     syncProfessors: async function(){
       this.botoActiu = false;
       await this.$axios.post(process.env.API + "/api/core/sync/reassignarGrupsProfessors");
+      this.botoActiu = true;
+    },
+    syncProfessorsForce: async function(){
+      this.botoActiu = false;
+      await this.$axios.post(process.env.API + "/api/core/sync/reassignarGrupsProfessorsForce");
       this.botoActiu = true;
     },
     provaGmail: async function(){
