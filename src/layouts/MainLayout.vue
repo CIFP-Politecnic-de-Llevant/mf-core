@@ -99,44 +99,36 @@
 </template>
 
 
-<script>
+<script setup>
 
-import { defineComponent,defineAsyncComponent,ref } from 'vue'
+import {ref, onMounted} from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {Rol} from '../model/Rol.ts'
 import Menuapp from '../components/common/AppsMenu.vue'
 
-export default defineComponent({
-  name: 'MainLayout',
-  components:{
-    Menuapp
-  },
-  setup () {
-    const leftDrawerOpen = ref(false)
-    const rolsUser = JSON.parse(localStorage.getItem("rol")) || []; //Inicialitzem a un array buit si no existeix cap rol
-    const router = useRouter()
-    const route = useRoute()
-    const rols = Rol;
+const leftDrawerOpen = ref(false)
+const rolsUser =  ref([]); //Inicialitzem a un array buit si no existeix cap rol
+const router = useRouter()
+const route = useRoute()
+const rols = Rol;
 
-    const enableGrupsCooperatius = (process.env.APP_ENABLE_GRUPSCOOPERATIUS==='true');
-    const enableConvalidacions=(process.env.APP_ENABLE_CONVALIDACIONS==='true');
-    const enableProfessoratManager=(process.env.APP_ENABLE_PROFESSORATMANAGER==='true');
+const enableGrupsCooperatius = (process.env.APP_ENABLE_GRUPSCOOPERATIUS==='true');
+const enableConvalidacions=(process.env.APP_ENABLE_CONVALIDACIONS==='true');
+const enableProfessoratManager=(process.env.APP_ENABLE_PROFESSORATMANAGER==='true');
 
-    const enableApps = enableGrupsCooperatius || enableConvalidacions || enableProfessoratManager;
+const enableApps = enableGrupsCooperatius || enableConvalidacions || enableProfessoratManager;
 
-    return {
-      rolsUser,
-      rols,
-      enableApps,
-      leftDrawerOpen,
-      toggleLeftDrawer () {
-        leftDrawerOpen.value = !leftDrawerOpen.value
-      },
-      goBack(){
-        router.go(-1);
-      }
-    }
-  }
+function toggleLeftDrawer () {
+  leftDrawerOpen.value = !leftDrawerOpen.value
+}
+
+function goBack(){
+  router.go(-1);
+}
+
+onMounted(()=>{
+  rolsUser.value = JSON.parse(localStorage.getItem("rol")) || [];
 })
+
 </script>
 
