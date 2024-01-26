@@ -41,8 +41,8 @@
     <q-btn :disable="!botoActiu" @click="provaGmail" color="primary" class="q-ma-md">Prova Gmail</q-btn>
     <small class="text-center">Missatge de prova de Gmail</small>
 
-    <q-btn :disable="!botoActiu" @click="mergeGSuiteGestib" color="primary" class="q-ma-md">Prova Gmail</q-btn>
-    <small class="text-center">Mescla usuaris GSuite i Gestib</small>
+    <q-btn :disable="!botoActiu" @click="mergeGSuiteGestib" color="primary" class="q-ma-md">Mescla usuaris GSuite i Gestib</q-btn>
+    <small class="text-center">ALERTA! Només emprar en casos que es vulgui mesclar per NOM I GOGNOMS els usuaris. Per exemple: primera sincronització. </small>
 
     <div id="result" v-if="result">
       <div v-for="r in result" v-html="r"></div>
@@ -144,6 +144,10 @@ export default defineComponent({
     mergeGSuiteGestib: async function(){
       this.botoActiu = false;
       await this.$axios.post(process.env.API + "/api/core/sync/mergegsuitegestib");
+      /*
+      const resultat = await this.$axios.post(process.env.API + "/api/core/sync/simular");
+      this.result = resultat.data;
+       */
       this.botoActiu = true;
     }
 
