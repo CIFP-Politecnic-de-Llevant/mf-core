@@ -144,10 +144,6 @@ export default defineComponent({
     mergeGSuiteGestib: async function(){
       this.botoActiu = false;
       await this.$axios.post(process.env.API + "/api/core/sync/mergegsuitegestib");
-      /*
-      const resultat = await this.$axios.post(process.env.API + "/api/core/sync/simular");
-      this.result = resultat.data;
-       */
       this.botoActiu = true;
     }
 
