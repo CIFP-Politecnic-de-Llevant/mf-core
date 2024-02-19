@@ -35,7 +35,6 @@ export default defineComponent({
   },
   methods: {
     get: async function () {
-
       const id:string = (this.$route.params.id)?this.$route.params.id+'':'';
 
       if(id && id!='') {
@@ -44,8 +43,6 @@ export default defineComponent({
 
       const usuarisActius:Usuari[] = await UsuariService.findUsuarisActius();
       this.professors = usuarisActius.filter(u=>u.esProfessor);
-
-
     },
     save: async function(){
       const dialog = this.$q.dialog({
