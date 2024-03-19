@@ -1,7 +1,7 @@
 <template>
   <div class="fullscreen flex flex-center background">
     <div>
-    <h1>Pàgina en mateniment</h1>
+    <h1>Pàgina en manteniment</h1>
     <br>
     <h2>Torni a provar-ho en uns minuts...</h2>
     </div>
