@@ -93,10 +93,20 @@
           :columns="columnes"
           row-key="idusuari"
           selection="multiple"
-          :filter="filterPendents"
+          :filter="filterSetPendents"
+          :filter-method="customFilterPendents"
           v-model:selected="selectedPendents"
         >
+
           <template v-slot:top-right>
+            <q-select 
+              v-model="pendentsCategoria" 
+              :options="pendentsCategoriaOptions"
+              label="Categoria"
+              class="q-mr-md"
+              style="min-width: 150px"
+             />
+
             <q-input borderless dense debounce="300" v-model="filterPendents" placeholder="Cerca">
               <template v-slot:append>
                 <q-icon name="search"/>
@@ -269,6 +279,8 @@ export default defineComponent({
       selectedEliminats: [],
       filterActius: '',
       filterPendents: '',
+      pendentsCategoria: '',
+      pendentsCategoriaOptions: [],
       filterSuspesos: '',
       filterEliminats: '',
       tab: ref('actius'),
@@ -280,6 +292,14 @@ export default defineComponent({
   },
   created() {
     this.get();
+  },
+  computed: {
+    filterSetPendents() {
+      return {
+        filterPendents: this.filterPendents,
+        pendentsCategoria: this.pendentsCategoria,      
+      }
+    }
   },
   methods: {
     get: async function () {
@@ -342,6 +362,8 @@ export default defineComponent({
       let responseUsersPendents = await this.$axios.get(process.env.API + '/api/core/usuaris/llistat/pendentssuspendre');
       let dataUsersPendents = await responseUsersPendents.data;
       this.pendents = dataUsersPendents;
+      this.pendentsCategoriaOptions = ['Tots', 'Professors', 'Alumnes']
+      this.pendentsCategoria = 'Tots'
 
       let responseUsersSuspesos = await this.$axios.get(process.env.API + '/api/core/usuaris/llistat/suspesos');
       let dataUsersSuspesos = await responseUsersSuspesos.data;
@@ -378,6 +400,39 @@ export default defineComponent({
     reset() {
       Object.assign(this.$data, this.$options.data.call(this));
       this.$options.created.call(this);
+    },
+    customFilterPendents(rows, terms){
+      let lowerSearch = terms.filterPendents ? terms.filterPendents.toLowerCase() : ""
+      const filteredRows = rows.filter((row, i) =>{
+        
+        // filtre per categoria
+        let categoryMatch = true;
+        if (terms.pendentsCategoria === 'Professors') {
+          categoryMatch = row.gestibProfessor === true;
+        } else if (terms.pendentsCategoria === 'Alumnes') {
+          categoryMatch = row.gestibAlumne === true;
+        }
+
+        //criteri de cerca per filtre de text (lowercase)
+        let searchMath = true
+
+        if(lowerSearch != ""){
+          searchMath = false
+          let sc_values = Object.values(row)
+          let sc_lower = sc_values.map(x => x?.toString().toLowerCase())
+        
+          for (let val = 0; val<sc_lower.length; val++){
+            if (sc_lower[val]?.includes(lowerSearch)){
+              searchMath = true
+              break
+            }
+          }
+        }
+
+        return categoryMatch && searchMath
+      })
+
+      return filteredRows
     }
   },
 })
