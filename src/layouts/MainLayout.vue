@@ -33,6 +33,14 @@
             <q-item-label>Usuaris</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item clickable to="/rolsusuari/list" v-if="rolsUser.find(rol=>rol===rols.ADMINISTRADOR)">
+          <q-item-section avatar>
+            <q-icon name="badge" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>Rols d'usuari</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item clickable to="/curs/list" v-if="rolsUser.find(rol=>rol===rols.ADMINISTRADOR || rol===rols.DIRECTOR || rol===rols.CAP_ESTUDIS)">
           <q-item-section avatar>
             <q-icon name="menu_book" />
