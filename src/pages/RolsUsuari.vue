@@ -1,13 +1,7 @@
 <template>
   <q-page class="flex column" padding>
 
-    <q-table
-      title="Rols d'usuari"
-      :rows="usuaris"
-      :columns="columnes"
-      row-key="id"
-      :filter="filter"
-    >
+    <q-table title="Rols d'usuari" :rows="usuaris" :columns="columnes" row-key="id" :filter="filter">
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Cerca">
           <template v-slot:append>
@@ -18,9 +12,16 @@
 
       <template v-slot:body-cell-accions="props">
         <q-td :props="props">
-          <div>
+          <div class="flex q-pa-md q-gutter-sm">
             <q-btn-group push>
-              <q-btn icon="edit" color="primary" dense :to="'/rolsusuari/'+props.value">
+              <q-btn icon="visibility" color="primary" dense :to="'/profile/' + props.value">
+                <q-tooltip>
+                  Veure Perfil
+                </q-tooltip>
+              </q-btn>
+            </q-btn-group>
+            <q-btn-group push>
+              <q-btn icon="edit" color="primary" dense :to="'/rolsusuari/' + props.value">
                 <q-tooltip>
                   Rols
                 </q-tooltip>
@@ -37,7 +38,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import {QTableColumn} from "quasar";
+import { QTableColumn } from "quasar";
 import { UsuariService } from 'src/service/UsuariService';
 import { Usuari } from 'src/model/Usuari';
 
@@ -94,9 +95,8 @@ export default defineComponent({
           label: 'Rols',
           align: 'left',
           field: row => {
-            console.log(row);
-            if(row.rols){
-              return row.rols.map((g:String)=>g).join(", ")
+            if (row.rols) {
+              return row.rols.map((g: String) => g).join(", ")
             }
             return "";
           },
@@ -117,7 +117,6 @@ export default defineComponent({
       let dataUsersActius = await responseUsersActius.data;
       this.usuaris = dataUsersActius;
 
-      console.log(this.usuaris)
     }
   }
 })
