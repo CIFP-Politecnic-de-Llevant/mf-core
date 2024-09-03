@@ -142,9 +142,17 @@ export default defineComponent({
       this.botoActiu = true;
     },
     mergeGSuiteGestib: async function(){
+      const dialog = this.$q.dialog({
+        message: 'Iniciant la simulació... (Resultat al final de la pàgina)',
+        progress: true, // we enable default settings
+        persistent: true, // we want the user to not be able to close it
+        ok: false // we want the user to not be able to close it
+      })
       this.botoActiu = false;
-      await this.$axios.post(process.env.API + "/api/core/sync/mergegsuitegestib");
+      const resultat = await this.$axios.post(process.env.API + "/api/core/sync/mergegsuitegestib");
+      this.result = resultat.data;
       this.botoActiu = true;
+      dialog.hide();
     }
 
   }
