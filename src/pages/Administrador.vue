@@ -102,7 +102,7 @@ export default defineComponent({
         ok: false // we want the user to not be able to close it
       })
       this.botoActiu = false;
-      const resultat = await this.$axios.post(process.env.API + "/api/core/sync/cercaIdGesibDuplicats");
+      const resultat = await this.$axios.post(process.env.API + "/api/core/sync/cercaIdGestibDuplicats");
       this.result = resultat.data;
       this.botoActiu = true;
       dialog.hide();
