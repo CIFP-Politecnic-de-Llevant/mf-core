@@ -20,6 +20,9 @@
     <q-btn :disable="!botoActiu" @click="simula" color="primary" class="q-ma-md">Simulació</q-btn>
     <small class="text-center">Si hi ha fitxer pujat, comença la simulació. NO desa cap resultat a base de dades ni a GSuite.</small>
 
+    <q-btn :disable="!botoActiu" @click="duplicats" color="primary" class="q-ma-md">Duplicats</q-btn>
+    <small class="text-center">Comprova els duplicats de la BBDD i de GSuite</small>
+
     <q-btn :disable="!botoActiu" @click="sync" color="primary" class="q-ma-md">Sincronitza</q-btn>
     <small class="text-center">Si hi ha fitxer pujat, comença la sincronització. Alerta, dura molt de temps.</small>
 
@@ -87,6 +90,19 @@ export default defineComponent({
       })
       this.botoActiu = false;
       const resultat = await this.$axios.post(process.env.API + "/api/core/sync/simular");
+      this.result = resultat.data;
+      this.botoActiu = true;
+      dialog.hide();
+    },
+    duplicats: async function(){
+      const dialog = this.$q.dialog({
+        message: 'Duplicats de la BBDD i de GSuite... (Resultat al final de la pàgina)',
+        progress: true, // we enable default settings
+        persistent: true, // we want the user to not be able to close it
+        ok: false // we want the user to not be able to close it
+      })
+      this.botoActiu = false;
+      const resultat = await this.$axios.post(process.env.API + "/api/core/sync/cercaIdGesibDuplicats");
       this.result = resultat.data;
       this.botoActiu = true;
       dialog.hide();
