@@ -47,6 +47,12 @@
     <q-btn :disable="!botoActiu" @click="mergeGSuiteGestib" color="primary" class="q-ma-md">Mescla usuaris GSuite i Gestib</q-btn>
     <small class="text-center">ALERTA! Només emprar en casos que es vulgui mesclar per NOM I GOGNOMS els usuaris. Per exemple: primera sincronització. </small>
 
+    <q-btn :disable="!botoActiu" @click="overrideGestibFromGsuiteSimulate" color="primary" class="q-ma-md">SIMULA - Sobreescritura de e-mail i susès de GSuite a Gestib</q-btn>
+    <small class="text-center">ALERTA! Només emprar en casos que es vulgui SOBREESCRIURE el correu de GSuite a usuaris Gestib per codi personal/codi gestib. </small>
+
+    <q-btn :disable="!botoActiu" @click="overrideGestibFromGsuiteProduction" color="primary" class="q-ma-md">REAL - Sobreescritura de e-mail i susès de GSuite a Gestib</q-btn>
+    <small class="text-center">ALERTA! Només emprar en casos que es vulgui SOBREESCRIURE el correu de GSuite a usuaris Gestib per codi personal/codi gestib. </small>
+
     <div id="result" v-if="result">
       <div v-for="r in result" v-html="r"></div>
     </div>
@@ -169,8 +175,33 @@ export default defineComponent({
       this.result = resultat.data;
       this.botoActiu = true;
       dialog.hide();
-    }
-
+    },
+    overrideGestibFromGsuiteProduction: async function(){
+      const dialog = this.$q.dialog({
+        message: 'Iniciant la simulació... (Resultat al final de la pàgina)',
+        progress: true, // we enable default settings
+        persistent: true, // we want the user to not be able to close it
+        ok: false // we want the user to not be able to close it
+      })
+      this.botoActiu = false;
+      const resultat = await this.$axios.post(process.env.API + "/api/core/sync/overridegestibfromgsuite?simula=false");
+      this.result = resultat.data;
+      this.botoActiu = true;
+      dialog.hide();
+    },
+    overrideGestibFromGsuiteSimulate: async function(){
+      const dialog = this.$q.dialog({
+        message: 'Iniciant la simulació... (Resultat al final de la pàgina)',
+        progress: true, // we enable default settings
+        persistent: true, // we want the user to not be able to close it
+        ok: false // we want the user to not be able to close it
+      })
+      this.botoActiu = false;
+      const resultat = await this.$axios.post(process.env.API + "/api/core/sync/overridegestibfromgsuite?simula=true");
+      this.result = resultat.data;
+      this.botoActiu = true;
+      dialog.hide();
+    },
   }
 })
 </script>
