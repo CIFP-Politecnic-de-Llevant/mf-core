@@ -79,7 +79,7 @@ export default defineComponent({
     },
     backupDatabase:async function(){
       this.botoActiu = false;
-      await this.$axios.post(process.env.API + '/api/core/administrator/backupdatabase');
+      await this.$axios.post(process.env.API + '/api/backups/generate');
       this.botoActiu = true;
     },
     reassignarGrupsGSuiteToBBDD: async function(){
