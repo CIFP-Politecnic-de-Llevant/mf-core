@@ -59,7 +59,14 @@
       label="Grups classe associat"
     />
 
-    <q-btn v-if="grup.grupCorreuTipus==='ALUMNAT' || grup.grupCorreuTipus==='PROFESSORAT' || grup.grupCorreuTipus==='TUTORS_FCT' || grup.grupCorreuTipus==='DEPARTAMENT'  || grup.grupCorreuTipus==='TUTORS'" label="Autoemplenar grup" color="primary" @click="confirmAutoemplenar = true" />
+    <q-select
+      v-if="grup.grupCorreuTipus==='DEPARTAMENT'"
+      v-model="selectedDepartament"
+      :options="departamentOptions"
+      label="Departament associat"
+    />
+
+<!--    <q-btn v-if="grup.grupCorreuTipus==='ALUMNAT' || grup.grupCorreuTipus==='PROFESSORAT' || grup.grupCorreuTipus==='TUTORS_FCT' || grup.grupCorreuTipus==='DEPARTAMENT'  || grup.grupCorreuTipus==='TUTORS'" label="Autoemplenar grup" color="primary" @click="confirmAutoemplenar = true" />-->
 
     <q-list bordered class="rounded-borders">
 
@@ -118,7 +125,8 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import {defineComponent} from 'vue';
+import {DepartamentService} from "src/service/DepartamentService";
 
 export default defineComponent({
   name: 'PageGrupCorreuForm',
@@ -126,7 +134,7 @@ export default defineComponent({
     return {
       grup: {},
       members: [],
-      users: [],
+      userOptions: [],
       grupMembers: [],
       grups: [],
       grupsClasse:[],
@@ -140,6 +148,9 @@ export default defineComponent({
       filterGrups: '',
       selectedUsuaris: [],
       selectedGrups: [],
+      departaments: [],
+      departamentOptions: [],
+      selectedDepartament: null,
       confirmAutoemplenar: false
     }
   },
@@ -180,20 +191,19 @@ export default defineComponent({
       }
 
       const responseUsers = await this.$axios.get(process.env.API + '/api/core/usuaris/llistat/actius');
-      const dataUsers = await responseUsers.data;
-      this.users = dataUsers;
+      this.userOptions = await responseUsers.data;
 
       const responseGroups = await this.$axios.get(process.env.API + '/api/core/grupcorreu/llistat');
-      const dataGroups = await responseGroups.data;
-      this.grups = dataGroups;
+      this.grups = await responseGroups.data;
+
+      this.departaments = await DepartamentService.getDepartaments();
 
       const responseGrupsClasse = await this.$axios.get(process.env.API + '/api/core/grup/llistat');
       const dataGrupsClasse = await responseGrupsClasse.data;
       /* TODO: PROMISE.ALL */
       const gClasse = dataGrupsClasse.map(async g=>{
         const responseCurs = await this.$axios.get(process.env.API + '/api/core/curs/getByCodiGestib/'+g.gestibCurs)
-        const dataCurs = await responseCurs.data;
-        g.curs = dataCurs;
+        g.curs = await responseCurs.data;
         return g;
       });
       const grupsClasse = await Promise.all(gClasse);
@@ -211,7 +221,7 @@ export default defineComponent({
       })
 
 
-      this.options = this.users.map(user=>{
+      this.options = this.userOptions.map(user=>{
         return {
           label: user.gsuiteFamilyName + ', ' + user.gsuiteGivenName+ ' ('+user.gsuiteEmail+')',
           value: user.gsuiteEmail
@@ -224,6 +234,15 @@ export default defineComponent({
           value: grup.gsuiteEmail
         }
       })
+
+      this.departamentOptions = this.departaments
+          .map((d) => {
+            return {
+              label: d.nom,
+              value: d.gestibId
+            }
+          })
+
       this.optionsGrupCorreuTipus = ['GENERAL','ALUMNAT','CLAUSTRE','PROFESSORAT','TUTORS','TUTORS_FCT','DEPARTAMENT']
 
       this.grupClasseOptions = this.grupsClasse
@@ -269,7 +288,7 @@ export default defineComponent({
       member.bloquejat = !member.bloquejat;
     },
     setModel (val) {
-      let usuari = this.users.find(user=> {
+      let usuari = this.userOptions.find(user=> {
         return user.gsuiteFamilyName + ', ' + user.gsuiteGivenName + ' ('+user.gsuiteEmail+')' === val
       })
       if(usuari){
@@ -280,7 +299,7 @@ export default defineComponent({
     filterFn (val, update) {
       if (val === '') {
         update(() => {
-          this.options = this.users.map(user=>{
+          this.options = this.userOptions.map(user=>{
             return {
               label: user.gsuiteFamilyName + ', ' + user.gsuiteGivenName + ' ('+user.gsuiteEmail+')',
               value: user.gsuiteEmail
@@ -292,7 +311,7 @@ export default defineComponent({
 
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.users.filter(v => {
+        this.options = this.userOptions.filter(v => {
           let cognoms = false;
           let nom = false;
           let email = false;
@@ -362,21 +381,36 @@ export default defineComponent({
       })
     },
     save: async function(){
+      if (this.grup.grupCorreuTipus === 'DEPARTAMENT' && !this.selectedDepartament) {
+        this.$q.dialog({
+          title: 'Error',
+          message: 'El departament és obligatori per aquest tipus de grup.',
+          ok: true
+        });
+        return;
+      }
+
       const dialog = this.$q.dialog({
         message: 'Carregant...',
-        progress: true, // we enable default settings
-        persistent: true, // we want the user to not be able to close it
-        ok: false // we want the user to not be able to close it
-      })
+        progress: true,
+        persistent: true,
+        ok: false
+      });
 
       this.grup.usuaris = this.members;
       this.grup.grupCorreus = this.grupMembers;
 
-      await this.$axios.post(process.env.API + '/api/core/grupcorreu/desar',this.grup);
+      if(this.grup.grupCorreuTipus !== 'DEPARTAMENT'){
+        this.grup.departamentGestibIdentificador = null;
+      } else if(this.selectedDepartament) {
+        this.grup.departamentGestibIdentificador = this.selectedDepartament.value;
+      }
+
+      await this.$axios.post(process.env.API + '/api/core/grupcorreu/desar', this.grup);
       dialog.hide();
-      //Redirect
       this.$router.push('/grupcorreu/list');
     },
+
     autoemplenaUsuaris: async function(){
       const dialog = this.$q.dialog({
         message: 'Carregant...',
@@ -392,8 +426,7 @@ export default defineComponent({
       await this.$axios.post(process.env.API + '/api/core/grupcorreu/desar', this.grup);
 
       const response = await this.$axios.get(process.env.API + '/api/core/grupcorreu/grupambusuaris/' + this.grup.gsuiteEmail);
-      const data = await response.data;
-      this.grup = data;
+      this.grup = await response.data;
 
       await this.$axios.post(process.env.API + '/api/core/grupcorreu/autoemplenar',this.grup);
       dialog.hide();

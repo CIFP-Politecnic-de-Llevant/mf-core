@@ -92,7 +92,6 @@
 import { defineComponent } from 'vue';
 import {Calendari} from "src/model/google/Calendari";
 import {CalendariService} from "src/service/CalendariService";
-import {UsuariService} from "src/service/UsuariService";
 import {GrupCorreuService} from "src/service/GrupCorreuService";
 import {GrupCorreu} from "src/model/google/GrupCorreu";
 import {Usuari} from "src/model/Usuari";
@@ -104,7 +103,7 @@ export default defineComponent({
     return {
       calendari: {} as Calendari,
       members: [] as Usuari[],
-      users: [] as Usuari[],
+      userOptions: [] as Usuari[],
       grupMembers: [] as GrupCorreu[],
       grups: [] as GrupCorreu[],
       selected:[],
@@ -202,13 +201,10 @@ export default defineComponent({
         this.calendari = await CalendariService.getCalendariByEmail(id);
 
       }
-
-      this.users = await UsuariService.findUsuarisActius();
-
       this.grups = await GrupCorreuService.findAll();
 
 
-      this.options = this.users;
+      this.options = this.userOptions;
 
       this.grupOptions = this.grups;
 
@@ -232,7 +228,7 @@ export default defineComponent({
       })
     },
     setModel (val:string  ) {
-      let usuari = this.users.find(user=> {
+      let usuari = this.userOptions.find(user=> {
         return user.label === val
       })
       if(usuari){
@@ -243,14 +239,14 @@ export default defineComponent({
     filterFn (val:string, update:any) {
       if (val === '') {
         update(() => {
-          this.options = this.users
+          this.options = this.userOptions
         })
         return
       }
 
       update(() => {
         const needle = val.toLowerCase()
-        this.options = this.users.filter(v => {
+        this.options = this.userOptions.filter(v => {
           let nomComplet = false;
           let email = false;
 
