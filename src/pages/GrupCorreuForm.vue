@@ -221,12 +221,7 @@ export default defineComponent({
       })
 
 
-      this.options = this.userOptions.map(user=>{
-        return {
-          label: user.gsuiteFamilyName + ', ' + user.gsuiteGivenName+ ' ('+user.gsuiteEmail+')',
-          value: user.gsuiteEmail
-        }
-      })
+      this.options = this.userOptions.map(user=>this.usuariOption(user))
 
       this.grupOptions = this.grups.map(grup=>{
         return {
@@ -287,11 +282,24 @@ export default defineComponent({
     bloquejaMember: function(member){
       member.bloquejat = !member.bloquejat;
     },
+    usuariLabel (user) {
+      //Un usuari pot no tenir correu de GSuite (per exemple, si la sincronitzacio no l'ha pogut
+      //enllaçar amb el seu compte). Sense correu no es pot afegir al grup, i ho hem de dir.
+      const correu = user.gsuiteEmail ? user.gsuiteEmail : 'sense correu de GSuite';
+      return user.gsuiteFamilyName + ', ' + user.gsuiteGivenName + ' (' + correu + ')';
+    },
+    usuariOption (user) {
+      return {
+        label: this.usuariLabel(user),
+        value: user.gsuiteEmail,
+        disable: !user.gsuiteEmail
+      }
+    },
     setModel (val) {
       let usuari = this.userOptions.find(user=> {
-        return user.gsuiteFamilyName + ', ' + user.gsuiteGivenName + ' ('+user.gsuiteEmail+')' === val
+        return this.usuariLabel(user) === val
       })
-      if(usuari){
+      if(usuari && usuari.gsuiteEmail && !this.members.some(m=>m.idusuari === usuari.idusuari)){
         this.members.push(usuari)
         this.selected = [];
       }
@@ -299,12 +307,7 @@ export default defineComponent({
     filterFn (val, update) {
       if (val === '') {
         update(() => {
-          this.options = this.userOptions.map(user=>{
-            return {
-              label: user.gsuiteFamilyName + ', ' + user.gsuiteGivenName + ' ('+user.gsuiteEmail+')',
-              value: user.gsuiteEmail
-            }
-          })
+          this.options = this.userOptions.map(user=>this.usuariOption(user))
         })
         return
       }
@@ -328,12 +331,7 @@ export default defineComponent({
             email = v.gsuiteEmail.toLowerCase().indexOf(needle) > -1
           }
           return cognoms || nom || email;
-        }).map(user=>{
-          return {
-            label: user.gsuiteFamilyName + ', ' + user.gsuiteGivenName + ' ('+user.gsuiteEmail+')',
-            value: user.gsuiteEmail
-          }
-        })
+        }).map(user=>this.usuariOption(user))
       })
     },
     setGrupModel (val) {
