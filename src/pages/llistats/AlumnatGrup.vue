@@ -2,6 +2,10 @@
   <q-page class="flex column" padding>
     <p class="text-h3">Llistat d'alumnat desglossat per grup</p>
 
+    <div class="q-mb-md">
+      <q-btn flat color="primary" :icon="totsSeleccionats ? 'remove_done' : 'done_all'" :label="totsSeleccionats ? 'Deseleccionar tots els grups' : 'Seleccionar tots els grups'" @click="alternarTots" />
+    </div>
+
     <div class="row">
       <q-checkbox v-for="grupClasse of grupsClasse" class="col-3" v-model="grupsClasseModel" :val="grupClasse" :label="grupClasse.gestibNom" />
     </div>
@@ -19,6 +23,11 @@ export default defineComponent({
     return {
       grupsClasse: [],
       grupsClasseModel: []
+    }
+  },
+  computed: {
+    totsSeleccionats() {
+      return this.grupsClasse.length > 0 && this.grupsClasseModel.length === this.grupsClasse.length;
     }
   },
   created() {
@@ -43,6 +52,9 @@ export default defineComponent({
       });
       this.grupsClasse = await Promise.all(gClasse);
       dialog.hide();
+    },
+    alternarTots: function () {
+      this.grupsClasseModel = this.totsSeleccionats ? [] : [...this.grupsClasse];
     },
     llistat: async function(){
       const dialog = this.$q.dialog({
