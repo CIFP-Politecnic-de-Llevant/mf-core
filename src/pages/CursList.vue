@@ -74,7 +74,7 @@ export default defineComponent({
           field: row => {
             console.log(row);
             if(row.grups){
-              return row.grups.map((g:Grup)=>g.nom + (g.unitatOrganitzativa)?` (${g.unitatOrganitzativa})`:'').join(", ")
+              return row.grups.map((g:Grup)=>g.nom + (g.unitatOrganitzativa ? ` (${g.unitatOrganitzativa})` : '')).join(", ")
             }
             return "";
           },
