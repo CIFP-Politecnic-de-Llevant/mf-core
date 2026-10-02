@@ -7,7 +7,11 @@
       :columns="columnes"
       row-key="id"
       :filter="filter"
+      :loading="loading"
     >
+      <template v-slot:loading>
+        <q-inner-loading showing color="primary" />
+      </template>
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Cerca">
           <template v-slot:append>
@@ -48,6 +52,7 @@ export default defineComponent({
       departaments: [] as Departament[],
       columnes: [] as QTableColumn[],
       filter: '',
+      loading: true,
     }
   },
   created() {
@@ -87,9 +92,14 @@ export default defineComponent({
         }
       ]
 
-      let departaments:Departament[] = await DepartamentService.getDepartaments();
+      this.loading = true;
+      try {
+        let departaments:Departament[] = await DepartamentService.getDepartaments();
 
-      this.departaments = departaments;
+        this.departaments = departaments;
+      } finally {
+        this.loading = false;
+      }
     }
   }
 })

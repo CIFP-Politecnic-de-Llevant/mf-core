@@ -15,7 +15,11 @@
       selection="single"
       :filter="filter"
       v-model:selected="selected"
+      :loading="loading"
     >
+      <template v-slot:loading>
+        <q-inner-loading showing color="primary" />
+      </template>
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Cerca">
           <template v-slot:append>
@@ -39,6 +43,7 @@ export default defineComponent({
       columnes: [],
       selected: [],
       filter: '',
+      loading: true,
     }
   },
   created() {
@@ -85,35 +90,40 @@ export default defineComponent({
         }
       ]
 
-      const cursResponse = await this.$axios.get(process.env.API + '/api/core/curs/llistat');
-      const cursos = cursResponse.data;
+      this.loading = true;
+      try {
+        const cursResponse = await this.$axios.get(process.env.API + '/api/core/curs/llistat');
+        const cursos = cursResponse.data;
 
-      let response = await this.$axios.get(process.env.API + '/api/core/grupcorreu/llistat');
-      let data = await response.data;
-      for(const grupCorreu of data){
-        const nomGrups = [];
-        for(const grup of grupCorreu.grups){
-          let nom = "";
-          if(grup.gestibCurs) {
-            let dataCurs = cursos.find(c=>c.gestibIdentificador===grup.gestibCurs)
-            if(dataCurs) {
-              nom += dataCurs.gestibNom;
+        let response = await this.$axios.get(process.env.API + '/api/core/grupcorreu/llistat');
+        let data = await response.data;
+        for(const grupCorreu of data){
+          const nomGrups = [];
+          for(const grup of grupCorreu.grups){
+            let nom = "";
+            if(grup.gestibCurs) {
+              let dataCurs = cursos.find(c=>c.gestibIdentificador===grup.gestibCurs)
+              if(dataCurs) {
+                nom += dataCurs.gestibNom;
+              }
             }
+            nom += grup.gestibNom;
+            nomGrups.push(nom);
           }
-          nom += grup.gestibNom;
-          nomGrups.push(nom);
-        }
 
-        const nomDepartaments = [];
-        for(const departament of grupCorreu.departaments){
-          let nom = departament.gestibNom;
-          nomDepartaments.push(nom);
-        }
+          const nomDepartaments = [];
+          for(const departament of grupCorreu.departaments){
+            let nom = departament.gestibNom;
+            nomDepartaments.push(nom);
+          }
 
-        grupCorreu.nomGrups = nomGrups.sort().join(", ");
-        grupCorreu.nomDepartaments = nomDepartaments.sort().join(", ");
+          grupCorreu.nomGrups = nomGrups.sort().join(", ");
+          grupCorreu.nomDepartaments = nomDepartaments.sort().join(", ");
+        }
+        this.grupsCorreu = data
+      } finally {
+        this.loading = false;
       }
-      this.grupsCorreu = data
     }
   }
 })

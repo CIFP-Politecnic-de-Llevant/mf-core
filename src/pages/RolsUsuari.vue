@@ -1,7 +1,10 @@
 <template>
   <q-page class="flex column" padding>
 
-    <q-table title="Rols d'usuari" :rows="usuaris" :columns="columnes" row-key="id" :filter="filter">
+    <q-table title="Rols d'usuari" :rows="usuaris" :columns="columnes" row-key="id" :filter="filter" :loading="loading">
+      <template v-slot:loading>
+        <q-inner-loading showing color="primary" />
+      </template>
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Cerca">
           <template v-slot:append>
@@ -49,6 +52,7 @@ export default defineComponent({
       usuaris: [] as Usuari[],
       columnes: [] as QTableColumn[],
       filter: '',
+      loading: true,
     }
   },
   created() {
@@ -113,9 +117,14 @@ export default defineComponent({
       ]
 
       // let usuaris:Usuari[] = await UsuariService.findUsuarisActius(false);
-      let responseUsersActius = await this.$axios.get(process.env.API + '/api/core/usuaris/llistat/actius');
-      let dataUsersActius = await responseUsersActius.data;
-      this.usuaris = dataUsersActius;
+      this.loading = true;
+      try {
+        let responseUsersActius = await this.$axios.get(process.env.API + '/api/core/usuaris/llistat/actius');
+        let dataUsersActius = await responseUsersActius.data;
+        this.usuaris = dataUsersActius;
+      } finally {
+        this.loading = false;
+      }
 
     }
   }

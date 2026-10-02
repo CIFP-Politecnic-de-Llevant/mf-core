@@ -34,7 +34,11 @@
               selection="multiple"
               :filter="filterActius"
               v-model:selected="selectedActius"
+              :loading="loadingActius"
             >
+              <template v-slot:loading>
+                <q-inner-loading showing color="primary" />
+              </template>
               <template v-slot:top-right>
                 <q-input borderless dense debounce="300" v-model="filterActius" placeholder="Cerca">
                   <template v-slot:append>
@@ -96,7 +100,11 @@
           :filter="filterSetPendents"
           :filter-method="customFilterPendents"
           v-model:selected="selectedPendents"
+          :loading="loadingPendents"
         >
+          <template v-slot:loading>
+            <q-inner-loading showing color="primary" />
+          </template>
 
           <template v-slot:top-right>
             <q-select 
@@ -140,7 +148,11 @@
           selection="multiple"
           :filter="filterSuspesos"
           v-model:selected="selectedSuspesos"
+          :loading="loadingSuspesos"
         >
+          <template v-slot:loading>
+            <q-inner-loading showing color="primary" />
+          </template>
           <template v-slot:top-right>
             <q-input borderless dense debounce="300" v-model="filterSuspesos" placeholder="Cerca">
               <template v-slot:append>
@@ -172,7 +184,11 @@
           selection="multiple"
           :filter="filterEliminats"
           v-model:selected="selectedEliminats"
+          :loading="loadingEliminats"
         >
+          <template v-slot:loading>
+            <q-inner-loading showing color="primary" />
+          </template>
           <template v-slot:top-right>
             <q-input borderless dense debounce="300" v-model="filterEliminats" placeholder="Cerca">
               <template v-slot:append>
@@ -287,7 +303,11 @@ export default defineComponent({
       confirmSuspendre: false,
       confirmSuspendreSuspesos: false,
       confirmReassignarGrups: false,
-      confirmReactivar: false
+      confirmReactivar: false,
+      loadingActius: true,
+      loadingPendents: true,
+      loadingSuspesos: true,
+      loadingEliminats: true
     }
   },
   created() {
@@ -355,23 +375,24 @@ export default defineComponent({
         }
       ]
 
-      let responseUsersActius = await this.$axios.get(process.env.API + '/api/core/usuaris/llistat/actius');
-      let dataUsersActius = await responseUsersActius.data;
-      this.actius = dataUsersActius;
-
-      let responseUsersPendents = await this.$axios.get(process.env.API + '/api/core/usuaris/llistat/pendentssuspendre');
-      let dataUsersPendents = await responseUsersPendents.data;
-      this.pendents = dataUsersPendents;
       this.pendentsCategoriaOptions = ['Tots', 'Professors', 'Alumnes']
       this.pendentsCategoria = 'Tots'
 
-      let responseUsersSuspesos = await this.$axios.get(process.env.API + '/api/core/usuaris/llistat/suspesos');
-      let dataUsersSuspesos = await responseUsersSuspesos.data;
-      this.suspesos = dataUsersSuspesos;
-
-      let responseUsersEliminats = await this.$axios.get(process.env.API + '/api/core/usuaris/llistat/eliminats');
-      let dataUsersEliminats = await responseUsersEliminats.data;
-      this.eliminats = dataUsersEliminats;
+      await Promise.all([
+        this.carregaLlista('actius', 'loadingActius', '/api/core/usuaris/llistat/actius'),
+        this.carregaLlista('pendents', 'loadingPendents', '/api/core/usuaris/llistat/pendentssuspendre'),
+        this.carregaLlista('suspesos', 'loadingSuspesos', '/api/core/usuaris/llistat/suspesos'),
+        this.carregaLlista('eliminats', 'loadingEliminats', '/api/core/usuaris/llistat/eliminats')
+      ]);
+    },
+    carregaLlista: async function (llista, loading, path) {
+      this[loading] = true;
+      try {
+        const response = await this.$axios.get(process.env.API + path);
+        this[llista] = response.data;
+      } finally {
+        this[loading] = false;
+      }
     },
     suspenUsuaris: async function () {
       const usuaris = this.selectedPendents;

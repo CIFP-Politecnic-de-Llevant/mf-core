@@ -8,7 +8,11 @@
       selection="single"
       :filter="filter"
       v-model:selected="selected"
+      :loading="loading"
     >
+      <template v-slot:loading>
+        <q-inner-loading showing color="primary" />
+      </template>
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Cerca">
           <template v-slot:append>
@@ -51,7 +55,8 @@ export default defineComponent({
       selected: [],
       filter: '',
       rolsUser: JSON.parse(localStorage.getItem("rol")??"") || [],
-      rols: Rol
+      rols: Rol,
+      loading: true
     }
   },
   created() {
@@ -118,9 +123,14 @@ export default defineComponent({
         }*/
       ]
 
-      const calendaris:Array<Calendari>= await CalendariService.getCalendaris();
+      this.loading = true;
+      try {
+        const calendaris:Array<Calendari>= await CalendariService.getCalendaris();
 
-      this.calendaris = calendaris;
+        this.calendaris = calendaris;
+      } finally {
+        this.loading = false;
+      }
     }
   }
 })

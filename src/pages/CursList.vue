@@ -7,7 +7,11 @@
       :columns="columnes"
       row-key="id"
       :filter="filter"
+      :loading="loading"
     >
+      <template v-slot:loading>
+        <q-inner-loading showing color="primary" />
+      </template>
       <template v-slot:top-right>
         <q-input borderless dense debounce="300" v-model="filter" placeholder="Cerca">
           <template v-slot:append>
@@ -50,6 +54,7 @@ export default defineComponent({
       cursos: [] as Curs[],
       columnes: [] as QTableColumn[],
       filter: '',
+      loading: true,
     }
   },
   created() {
@@ -90,14 +95,18 @@ export default defineComponent({
         }
       ]
 
-      let cursos:Curs[] = await CursService.getCursos();
+      this.loading = true;
+      try {
+        let cursos:Curs[] = await CursService.getCursos();
 
-      for(let curs of cursos){
-        let grups:Grup[] = await GrupService.getGrupsByCurs(curs);
-        curs.grups = grups;
+        await Promise.all(cursos.map(async (curs) => {
+          curs.grups = await GrupService.getGrupsByCurs(curs);
+        }));
+
+        this.cursos = cursos;
+      } finally {
+        this.loading = false;
       }
-
-      this.cursos = cursos;
     }
   }
 })
